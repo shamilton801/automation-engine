@@ -17,6 +17,17 @@ class Engine:
         for opp in opponents:
             self._matches_to_run.put(Match(bot_name, opp))
 
+
+    def stop(self):
+        self._stop_flag = True
+        self._consumer_handle.join()
+
+    def start(self):
+        if self._stop_flag:
+            self._consumer_handle = Process(target=self._match_consumer, args=(self,))
+            self._consumer_handle.start()
+            self._stop_flag = False
+
     def _match_consumer(self):
         while not self._stop_flag:
             if len(self._running_matches) < MAX_CON_MATCHES:
@@ -31,4 +42,4 @@ class Engine:
                     self._running_matches.remove(match)
 
     def _send_result(self, json_result):
-        pass
+        print(json_result)
