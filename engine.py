@@ -1,22 +1,28 @@
 from multiprocessing import Queue, Process
+from db_interface import DBInterface
 from match import Match
+from test_db_interface import TestDBInterface
+import time
 
+# Parameters
 MAX_CON_MATCHES = 1
+
+# Enums
+SEEKER = 1
+HIDER = 2
 
 class Engine:
 
-    def __init__(self):
+    def __init__(self, db: DBInterface):
         self._running_matches = []
         self._matches_to_run = Queue()
-        self._consumer_handle = Process(target=self._match_consumer, args=(self,))
-        self._consumer_handle.start()
         self._stop_flag = False
+        self._db = db
 
     def handle_new_bot(self, bot_name, type):
-        opponents = get_opponents(type)
+        opponents = self._db.get_opponents(type)
         for opp in opponents:
-            self._matches_to_run.put(Match(bot_name, opp))
-
+            self._matches_to_run.put(Match(bot_name, opp, time.time(), self._db))
 
     def stop(self):
         self._stop_flag = True
@@ -43,3 +49,8 @@ class Engine:
 
     def _send_result(self, json_result):
         print(json_result)
+
+if __name__ == '__main__':
+    db = TestDBInterface()
+    engine = Engine(db)
+    engine.start()
