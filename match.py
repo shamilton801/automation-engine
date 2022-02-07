@@ -46,8 +46,12 @@ class Match:
                     
     def _copy_game_files(self, destination):
         full_path = os.path.join(self._parent_dir, "game")
-        print(full_path, destination, flush=True)
-        shutil.copy(full_path, destination)
+        for filename in os.listdir(full_path):
+            file_path = os.path.join(full_path, filename)
+            shutil.copyfile(file_path, f"{destination}/{filename}")
+
+        # print(full_path, destination, flush=True)
+        # shutil.copy(full_path, destination)
     
     def stop(self):
         self._container.kill()
