@@ -15,7 +15,7 @@ HIDER = 2
 class Engine:
 
     def __init__(self, db: DBInterface):
-        self._running_matches = []
+        self._running_matches:Match = []
         self._matches_to_run = deque()
         self._stop_flag = False
         self._db = db
@@ -51,6 +51,7 @@ class Engine:
             for match in self._running_matches:
                 if match.is_finished():
                     json_result = match.get_result()
+                    print(json_result)
                     self._send_result(json_result)
                     self._running_matches.remove(match)
 
