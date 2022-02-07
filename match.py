@@ -27,9 +27,9 @@ class Match:
         full_path = os.path.join(self._parent_dir, f"temp/{str(self._timestamp)}")
         os.mkdir(full_path)
         
-        self._db.download_bot_file(self._bot1, full_path)
-        self._db.download_bot_file(self._bot2, full_path)
-        self._copy_game_file(full_path)
+        self._db.download_bot_file(self._bot1, DBInterface.SEEKER, full_path)
+        self._db.download_bot_file(self._bot2, DBInterface.HIDER, full_path)
+        self._copy_game_files(full_path)
 
         command = f"python main.py {self._bot1}.py {self._bot2}.py {self._result_file_name}"
 
@@ -46,6 +46,7 @@ class Match:
                     
     def _copy_game_files(self, destination):
         full_path = os.path.join(self._parent_dir, "game")
+        print(full_path, destination, flush=True)
         shutil.copy(full_path, destination)
     
     def stop(self):

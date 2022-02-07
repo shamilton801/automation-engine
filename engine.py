@@ -1,5 +1,6 @@
-from multiprocessing import Queue, Process
+from threading import Thread, Lock
 from db_interface import DBInterface
+from collections import deque
 from match import Match
 from test_db_interface import TestDBInterface
 import time
@@ -15,29 +16,35 @@ class Engine:
 
     def __init__(self, db: DBInterface):
         self._running_matches = []
-        self._matches_to_run = Queue()
+        self._matches_to_run = deque()
         self._stop_flag = False
         self._db = db
+        self._lock = Lock()
 
     def handle_new_bot(self, bot_name, type):
         opponents = self._db.get_opponents(type)
         for opp in opponents:
-            self._matches_to_run.put(Match(bot_name, opp, time.time(), self._db))
+            new_match = Match(bot_name, opp, time.time(), self._db)
+            self._lock.acquire()
+            self._matches_to_run.appendleft(new_match)
+            self._lock.release()
 
     def stop(self):
         self._stop_flag = True
         self._consumer_handle.join()
+        self._stop_flag = False
 
     def start(self):
-        if self._stop_flag:
-            self._consumer_handle = Process(target=self._match_consumer, args=(self,))
-            self._consumer_handle.start()
-            self._stop_flag = False
+        self._consumer_handle = Thread(target=self._match_consumer, args=())
+        self._consumer_handle.start()
+        self._stop_flag = False
 
     def _match_consumer(self):
         while not self._stop_flag:
-            if len(self._running_matches) < MAX_CON_MATCHES:
-                new_match = self._matches_to_run.get()
+            if len(self._running_matches) < MAX_CON_MATCHES and len(self._matches_to_run) > 0:
+                self._lock.acquire()
+                new_match = self._matches_to_run.pop()
+                self._lock.release()
                 new_match.run()
                 self._running_matches.append(new_match)
 
