@@ -20,7 +20,7 @@ class Match:
         self._bot1_type = type
         self._bot2 = bot2
         self._bot2_type = Match.inverse_type(type)
-        self._timestamp = int(timestamp*1000)
+        self._timestamp = int(timestamp*100000)
         self._result_file_name = self._get_hash()
         self._db = db
         self._parent_dir = os.path.dirname(__file__)
