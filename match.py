@@ -72,6 +72,10 @@ class Match:
         full_path = os.path.join(self._parent_dir, "temp", f"match_{self._timestamp}", f"{self._result_file_name}.json")
         with open(full_path) as jsonf:
             result = json.load(jsonf)
+            seeker = self._bot1 if self._bot1_type == DBInterface.SEEKER else self._bot2
+            hider =  self._bot1 if self._bot1_type == DBInterface.HIDER else self._bot2
+            result["seeker"] = seeker
+            result["hider"] = hider
         return result
 
     def _get_hash(self):
