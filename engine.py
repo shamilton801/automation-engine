@@ -76,6 +76,9 @@ if __name__ == '__main__':
     engine.handle_new_bot("seeker", DBInterface.SEEKER)
     engine.handle_new_bot("hider", DBInterface.HIDER)
     engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
+    engine.handle_new_bot("hider copy", DBInterface.HIDER)
+    engine.handle_new_bot("scotland_yard copy", DBInterface.SEEKER)
+    engine.handle_new_bot("scotland_yard copy 2", DBInterface.SEEKER)
     
     keyboard_loop()
     engine.stop()
