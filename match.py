@@ -37,7 +37,7 @@ class Match:
         self._db.download_bot_file(self._bot2, self._bot2_type, match_dir_path)
         self._copy_game_files(match_dir_path)
 
-        command = f"python main.py {self._bot1}.py {self._bot2}.py {self._result_file_name}"
+        command = f"python main.py {self._result_file_name}"
 
         try:
             self._container = self._client.containers.run("python",

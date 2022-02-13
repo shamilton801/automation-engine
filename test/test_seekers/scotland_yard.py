@@ -1,12 +1,11 @@
 # Sample submission seeker python file
-from seeker import Seeker
 from typing import List, Tuple
 import random
 from collections import deque
 from board import Board
 
 
-class ScotlandYard(Seeker):
+class Seeker:
     """
     The scotland yard algorithm is based on prioritizing the least recently seen square. 
 
@@ -31,8 +30,7 @@ class ScotlandYard(Seeker):
     SEARCHING = 1
     CHASING = 2
 
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self):
         self.coord_to_turn = {}
 
         self.cur_loc = None

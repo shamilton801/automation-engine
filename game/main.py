@@ -19,7 +19,7 @@ try:
     for i, seed in enumerate(valid_seeds):
         print(f"------------- Match {i} -------------")
         start = time.time()
-        game = Game(Hider(), Seeker(), seed)
+        game = Game(Hider(), Seeker(), seed, render=False)
         winner, timesteps = game.game_loop()
         seeker_points += game.max_turns - timesteps
         hider_points += timesteps
@@ -41,7 +41,7 @@ except Exception as e:
         "extra_info": f"ERROR: {e}"
     }
 
-result_file_name = sys.argv[3]
+result_file_name = sys.argv[1]
 with open(f"{result_file_name}.json", "w") as f:
     json_str = json.dumps(result)
     f.write(json_str)

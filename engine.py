@@ -61,7 +61,11 @@ class Engine:
 if __name__ == '__main__':
     db = TestDBInterface()
     engine = Engine(db)
-    engine.start()
-    engine.handle_new_bot("seeker", DBInterface.SEEKER)
-    engine.handle_new_bot("hider", DBInterface.HIDER)
-    engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
+    try:
+        engine.start()
+        engine.handle_new_bot("seeker", DBInterface.SEEKER)
+        engine.handle_new_bot("hider", DBInterface.HIDER)
+        engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
+    except KeyboardInterrupt:
+        engine.stop()
+        
