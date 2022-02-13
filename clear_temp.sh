@@ -1,3 +1,3 @@
 cd temp
-rm -rf *
+sudo rm -rf *
 cd ..
