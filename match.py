@@ -46,7 +46,7 @@ class Match:
                                                           volumes=[f"{match_dir_path}:/code"],
                                                           network_disabled=True,
                                                           mem_limit="1000m",
-                                                          cpu_count=1,
+                                                          cpu_count=2,
                                                           )        
         except docker.errors.ContainerError as e: 
             print("Code execution failed - syntax error")
