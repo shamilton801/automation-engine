@@ -3,7 +3,9 @@ from db_interface import DBInterface
 from collections import deque
 from match import Match
 from test_db_interface import TestDBInterface
+import docker
 import time
+import sys
 
 # Parameters
 MAX_CON_MATCHES = 1
@@ -55,17 +57,22 @@ class Engine:
                     self._send_result(json_result)
                     self._running_matches.remove(match)
 
+        for match in self._running_matches:
+            match.stop()
+
     def _send_result(self, json_result):
         print(json_result)
 
 if __name__ == '__main__':
-    db = TestDBInterface()
-    engine = Engine(db)
     try:
+        db = TestDBInterface()
+        engine = Engine(db)
         engine.start()
         engine.handle_new_bot("seeker", DBInterface.SEEKER)
         engine.handle_new_bot("hider", DBInterface.HIDER)
         engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
     except KeyboardInterrupt:
         engine.stop()
+        docker.from_env().containers.prune()
+        sys.exit()
         
