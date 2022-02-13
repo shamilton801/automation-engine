@@ -1,3 +1,3 @@
 cd temp
-sudo rm -rf *
+sudo rm -rf match_*
 cd ..

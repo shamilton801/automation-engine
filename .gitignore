@@ -1,3 +1,4 @@
 *__pycache__*
-*temp*
-*.vscode*
+temp/*
+!temp/README.md
+.vscode*
