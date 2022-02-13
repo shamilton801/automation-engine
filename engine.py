@@ -5,7 +5,6 @@ from match import Match
 from test_db_interface import TestDBInterface
 import docker
 import time
-import sys
 
 # Parameters
 MAX_CON_MATCHES = 10
