@@ -7,7 +7,7 @@ class TestDBInterface(DBInterface):
         super().__init__()
 
 
-    def     _get_test_bot_dir(self, type):
+    def _get_test_bot_dir(self, type):
         file_path = None
         parent_dir = os.path.dirname(__file__)
         if type == super().SEEKER:
