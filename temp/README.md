@@ -1,0 +1,1 @@
+This file exists mainly so git knows to include the ```/temp``` directory. This is where the temporary match environments are created and manipulated. These can be deleted by running ```clear_temp.sh```
