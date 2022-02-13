@@ -4,6 +4,8 @@ import uuid
 import os
 import shutil
 import json
+
+from sympy import inverse_cosine_transform
 from db_interface import DBInterface
 
 
@@ -13,21 +15,26 @@ class Match:
     BOT1 = 1
     BOT2 = 2
 
-    def __init__(self, bot1, bot2, timestamp, db: DBInterface):
+    def __init__(self, bot1, bot2, type, timestamp, db: DBInterface):
         self._bot1 = bot1
+        self._bot1_type = type
         self._bot2 = bot2
+        self._bot2_type = Match.inverse_type(type)
         self._timestamp = int(timestamp)
         self._result_file_name = self._get_hash()
         self._db = db
         self._parent_dir = os.path.dirname(__file__)
         self._client = docker.from_env()
     
+    def inverse_type(type):
+        return 1-type
+
     def run(self):
         full_path = os.path.join(self._parent_dir, f"temp/match_{str(self._timestamp)}")
         os.mkdir(full_path)
         
-        self._db.download_bot_file(self._bot1, DBInterface.SEEKER, full_path)
-        self._db.download_bot_file(self._bot2, DBInterface.HIDER, full_path)
+        self._db.download_bot_file(self._bot1, self._bot1_type, full_path)
+        self._db.download_bot_file(self._bot2, self._bot2_type, full_path)
         self._copy_game_files(full_path)
 
         command = f"python main.py {self._bot1}.py {self._bot2}.py {self._result_file_name}"
@@ -50,9 +57,6 @@ class Match:
         for filename in os.listdir(full_path):
             file_path = os.path.join(full_path, filename)
             shutil.copyfile(file_path, f"{destination}/{filename}")
-
-        # print(full_path, destination, flush=True)
-        # shutil.copy(full_path, destination)
     
     def stop(self):
         self._container.kill()

@@ -24,7 +24,7 @@ class Engine:
     def handle_new_bot(self, bot_name, type):
         opponents = self._db.get_opponents(type)
         for opp in opponents:
-            new_match = Match(bot_name, opp, time.time(), self._db)
+            new_match = Match(bot_name, opp, type, time.time(), self._db)
             self._lock.acquire()
             self._matches_to_run.appendleft(new_match)
             self._lock.release()
