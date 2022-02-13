@@ -5,6 +5,12 @@ from hider import Hider
 from seeker import Seeker
 from typing import List, Tuple
 
+class SeekerException(Exception):
+    pass
+
+class HiderException(Exception):
+    pass
+
 class Game:
     SEEKER = 1
     HIDER = 2
@@ -50,7 +56,12 @@ class Game:
         board_states, visible_squares, valid_moves = self.get_player_states(self.HIDER)
         # Make a copy to pass to the player so they can't modify
         valid_moves_copy = list(valid_moves)
-        hider_action = self.hider_bot.get_action_from_state(board_states, visible_squares, valid_moves_copy)
+        
+        try:
+            hider_action = self.hider_bot.get_action_from_state(board_states, visible_squares, valid_moves_copy)
+        except Exception as e:
+            raise HiderException(e)
+
         hider_pos = self.board.player_2_pos
         if hider_action not in valid_moves:
             print("Hider has entered an invalid move, not moving the hider!")
@@ -67,7 +78,12 @@ class Game:
         board_states, visible_squares, valid_moves = self.get_player_states(self.SEEKER)
         # Make a copy to pass to the player so they can't modify
         valid_moves_copy = list(valid_moves)
-        seeker_action = self.seeker_bot.get_action_from_state(board_states, visible_squares, valid_moves_copy)
+        
+        try:
+            seeker_action = self.seeker_bot.get_action_from_state(board_states, visible_squares, valid_moves_copy)
+        except Exception as e:
+            raise SeekerException(e)
+        
         seeker_pos = self.board.player_1_pos
         if seeker_action not in valid_moves:
             print("Seeker has entered an invalid move, not moving the seeker!")
