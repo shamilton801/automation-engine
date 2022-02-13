@@ -10,10 +10,6 @@ import sys
 # Parameters
 MAX_CON_MATCHES = 10
 
-# Enums
-SEEKER = 1
-HIDER = 2
-
 class Engine:
 
     def __init__(self, db: DBInterface, stop_event: Event):
