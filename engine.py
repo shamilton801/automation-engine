@@ -1,4 +1,4 @@
-from threading import Thread, Lock
+from threading import Thread, Lock, Event
 from db_interface import DBInterface
 from collections import deque
 from match import Match
@@ -8,7 +8,7 @@ import time
 import sys
 
 # Parameters
-MAX_CON_MATCHES = 1
+MAX_CON_MATCHES = 10
 
 # Enums
 SEEKER = 1
@@ -16,10 +16,10 @@ HIDER = 2
 
 class Engine:
 
-    def __init__(self, db: DBInterface):
+    def __init__(self, db: DBInterface, stop_event: Event):
         self._running_matches:Match = []
         self._matches_to_run = deque()
-        self._stop_flag = False
+        self._stop_event = stop_event
         self._db = db
         self._lock = Lock()
 
@@ -32,17 +32,16 @@ class Engine:
             self._lock.release()
 
     def stop(self):
-        self._stop_flag = True
+        self._stop_event.set()
         self._consumer_handle.join()
-        self._stop_flag = False
+        self._stop_event.clear()
 
     def start(self):
-        self._consumer_handle = Thread(target=self._match_consumer, args=())
+        self._consumer_handle = Thread(target=self._match_consumer, args=(), daemon=True)
         self._consumer_handle.start()
-        self._stop_flag = False
 
     def _match_consumer(self):
-        while not self._stop_flag:
+        while not self._stop_event.is_set():
             if len(self._running_matches) < MAX_CON_MATCHES and len(self._matches_to_run) > 0:
                 self._lock.acquire()
                 new_match = self._matches_to_run.pop()
@@ -64,15 +63,15 @@ class Engine:
         print(json_result)
 
 if __name__ == '__main__':
+    db = TestDBInterface()
+    engine = Engine(db, Event())
+    engine.start()
+    engine.handle_new_bot("seeker", DBInterface.SEEKER)
+    engine.handle_new_bot("hider", DBInterface.HIDER)
+    engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
+    
     try:
-        db = TestDBInterface()
-        engine = Engine(db)
-        engine.start()
-        engine.handle_new_bot("seeker", DBInterface.SEEKER)
-        engine.handle_new_bot("hider", DBInterface.HIDER)
-        engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
+        pass
     except KeyboardInterrupt:
         engine.stop()
-        docker.from_env().containers.prune()
-        sys.exit()
-        
+        docker.from_env().containers.prune()            
