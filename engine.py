@@ -62,6 +62,18 @@ class Engine:
     def _send_result(self, json_result):
         print(json_result)
 
+
+count = 1
+def keyboard_loop():
+    global count
+    while True:
+        try:
+            pass
+        except KeyboardInterrupt:
+            print(f"Ctrl-C Received {count}/2")
+            count += 1
+            break
+
 if __name__ == '__main__':
     db = TestDBInterface()
     engine = Engine(db, Event())
@@ -70,8 +82,8 @@ if __name__ == '__main__':
     engine.handle_new_bot("hider", DBInterface.HIDER)
     engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
     
-    try:
-        pass
-    except KeyboardInterrupt:
-        engine.stop()
-        docker.from_env().containers.prune()            
+    keyboard_loop()
+    engine.stop()
+    docker.from_env().containers.prune()
+    keyboard_loop()            
+
