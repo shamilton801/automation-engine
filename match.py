@@ -20,7 +20,7 @@ class Match:
         self._bot1_type = type
         self._bot2 = bot2
         self._bot2_type = Match.inverse_type(type)
-        self._timestamp = int(timestamp)
+        self._timestamp = int(timestamp*1000)
         self._result_file_name = self._get_hash()
         self._db = db
         self._parent_dir = os.path.dirname(__file__)
@@ -30,12 +30,12 @@ class Match:
         return 1-type
 
     def run(self):
-        full_path = os.path.join(self._parent_dir, f"temp/match_{str(self._timestamp)}")
-        os.mkdir(full_path)
+        match_dir_path = os.path.join(self._parent_dir, f"temp", f"match_{str(self._timestamp)}")
+        os.mkdir(match_dir_path)
         
-        self._db.download_bot_file(self._bot1, self._bot1_type, full_path)
-        self._db.download_bot_file(self._bot2, self._bot2_type, full_path)
-        self._copy_game_files(full_path)
+        self._db.download_bot_file(self._bot1, self._bot1_type, match_dir_path)
+        self._db.download_bot_file(self._bot2, self._bot2_type, match_dir_path)
+        self._copy_game_files(match_dir_path)
 
         command = f"python main.py {self._bot1}.py {self._bot2}.py {self._result_file_name}"
 
@@ -43,9 +43,9 @@ class Match:
             self._container = self._client.containers.run("python",
                                                           command=command,
                                                           detach=True,
-                                                          volumes=[f"{full_path}:/code"],
+                                                          volumes=[f"{match_dir_path}:/code"],
                                                           network_disabled=True,
-                                                          mem_limit="500m",
+                                                          mem_limit="1000m",
                                                           cpu_count=1,
                                                           )        
         except docker.errors.ContainerError as e: 
