@@ -8,7 +8,7 @@ This repository contains the code to automate 2-player python games.
 
 ```python engine.py```
 
-When run it independently, ```engine.py``` uses ```TestDBInterface``` to pull bot files from the ```/test``` directory. Only generates matches for the bots explicitly pulled via a call to ```handle_new_bot```. Add more calls of ```handle_new_bot``` if you want every possible match to happen. 
+When run independently, ```engine.py``` uses ```TestDBInterface``` to pull bot files from the ```/test``` directory. Only generates matches for the bots explicitly pulled via a call to ```handle_new_bot```. Add more calls of ```handle_new_bot``` if you want every possible match to happen. 
 
 ### Production
 
