@@ -1,13 +1,10 @@
-from time import time
 import docker
 import uuid
 import os
 import shutil
 import json
 
-from sympy import inverse_cosine_transform
 from db_interface import DBInterface
-
 
 class Match:
 
