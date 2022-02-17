@@ -10,7 +10,7 @@ class FirebaseDBInterface(DBInterface):
     download_bot_file: 
     """
     
-    def __init__():
+    def __init__(self):
         super().__init__()
 
     def configure(self, record):
