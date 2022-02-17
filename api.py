@@ -5,9 +5,6 @@ from firebase_db_interface import FirebaseDBInterface
 from threading import Event
 
 app = Flask(__name__)
-firebase = FirebaseDBInterface()
-engine = Engine(firebase, Event())
-engine.start()
 
 @app.route('/newbot', methods=['POST'])
 def update_record():
@@ -21,4 +18,10 @@ def update_record():
 
     return jsonify({"status": message})
 
-app.run(debug=True)
+
+
+if __name__ == "__main__":
+    firebase = FirebaseDBInterface()
+    engine = Engine(firebase, Event())
+    engine.start()
+    app.run(host='0.0.0.0', port=80)
