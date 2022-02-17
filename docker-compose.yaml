@@ -1,0 +1,9 @@
+version: "3.3"
+services:
+  web:
+    build: .
+    ports:
+      - "80:5000"
+    volumes:
+      - .:/app
+    command: sh -c "pip3 install -r requirements.txt && cd app && python3 flask.py"
