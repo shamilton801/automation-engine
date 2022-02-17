@@ -14,30 +14,40 @@ class FirebaseDBInterface(DBInterface):
         super().__init__()
 
     def configure(self, record):
-        self.player = {}
-        self.player.name = record["name"]
-        self.player.filename = record["filename"]
-        self.player.type = DBInterface.SEEKER if record["type"] == "seeker" else DBInterface.HIDER
-        self.player.link = record["link"] 
+        self._player = {}
+        self._player.name = record["name"]
+        self._player.filename = record["filename"]
+        self._player.type = DBInterface.SEEKER if record["type"] == "seeker" else DBInterface.HIDER
+        self._player.link = record["link"] 
 
-        self.opponents = {}
+        self._opponents = {}
         for r in record["opponents"]:
-            self.opponents[r["name"]] =  (r["filename"], r["link"])    
+            self._opponents[r["name"]] =  (r["filename"], r["link"])    
 
     def get_opponents(self, type):
         result = []
-        for filename, _ in self.opponents:
+        for filename, _ in self._opponents:
             result.append(filename)
         
         return result
         
 
     def download_bot_file(self, name, type, destination):
-        if type == self.player.type:
-            url = self.player.link   
+        if type == self._player.type:
+            url = self._player.link   
         else:
-            url = self.opponents[name]
+            url = self._opponents[name]
         
         r = requests.get(url)
         with open(os.path.join(destination, f"{name}.py"), 'wb') as f:
             f.write(r.content) 
+
+    def get_real_name(self, filename):
+        if filename == self._player.filename:
+            return self._player.name
+        else:
+            for name, t in self._opponents.items():
+                if t[0] == filename:
+                    return name
+
+        raise Exception(f"Could not find bot name mapped to {filename}.py")

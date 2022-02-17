@@ -12,3 +12,6 @@ class DBInterface:
 
     def download_bot_file(self, name, type, destinaton):
         raise NotImplementedError()
+
+    def get_real_name(self, filename):
+        raise NotImplementedError()

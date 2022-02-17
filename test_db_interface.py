@@ -29,3 +29,6 @@ class TestDBInterface(DBInterface):
     def download_bot_file(self, name, type, destination):
         source_loc = os.path.join(self._get_test_bot_dir(type), f"{name}.py")
         shutil.copy(source_loc, os.path.join(destination, f"{name}.py"))
+
+    def get_real_name(self, filename):
+        return filename
