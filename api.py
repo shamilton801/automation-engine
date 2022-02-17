@@ -2,19 +2,25 @@
 # encoding: utf-8
 import json
 from flask import Flask, request, jsonify
+from engine import Engine
+from firebase_db_interface import FirebaseDBInterface
+from threading import Event
 
 app = Flask(__name__)
+firebase = FirebaseDBInterface()
+engine = Engine(firebase, Event())
+engine.start()
 
 @app.route('/newbot', methods=['POST'])
 def update_record():
     record = json.loads(request.data)
-    new_records = []
-    for r in record:
-        if r['name'] == record['name']:
-            r['email'] = record['email']
-        new_records.append(r)
-    with open('/tmp/data.txt', 'w') as f:
-        f.write(json.dumps(new_records, indent=2))
-    return jsonify(record)
+    message = "Engine received match set request successfully. Simulating now!"
+    try:
+        engine.handle_request(record)
+    except Exception as e:
+        print(e)
+        message = str(e)
+
+    return jsonify({"status": message})
 
 app.run(debug=True)

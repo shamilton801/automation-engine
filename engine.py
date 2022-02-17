@@ -16,12 +16,6 @@ class Engine:
         self._matches_to_run = deque()
         self._db = db
         self._lock = Lock()
-
-        self._running_test_matches:Match = []
-        self._test_matches_to_run = deque()
-        self._test_db = TestDBInterface()
-        self._test_lock = Lock()
-
         self._stop_event = stop_event
 
     def handle_new_bot(self, bot_name, type):
@@ -31,6 +25,10 @@ class Engine:
             self._lock.acquire()
             self._matches_to_run.appendleft(new_match)
             self._lock.release()
+
+    def handle_request(self, record):
+        self._db.configure(record)
+        self.handle_new_bot(self._db.player.filename, self._db.player.type)
 
     def stop(self):
         self._stop_event.set()

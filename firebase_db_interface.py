@@ -16,15 +16,21 @@ class FirebaseDBInterface(DBInterface):
     def configure(self, record):
         self.player = {}
         self.player.name = record["name"]
+        self.player.filename = record["filename"]
         self.player.type = DBInterface.SEEKER if record["type"] == "seeker" else DBInterface.HIDER
         self.player.link = record["link"] 
 
         self.opponents = {}
         for r in record["opponents"]:
-            self.opponents[r["name"]] =  r["link"]     
+            self.opponents[r["name"]] =  (r["filename"], r["link"])    
 
     def get_opponents(self, type):
-        return self.opponents.keys()
+        result = []
+        for filename, _ in self.opponents:
+            result.append(filename)
+        
+        return result
+        
 
     def download_bot_file(self, name, type, destination):
         if type == self.player.type:
