@@ -56,8 +56,6 @@ class Match:
     def is_finished(self):
         self._container.reload()
         res = self._container.status == "exited"
-        if res:
-            self._client.containers.prune()
         return res
 
     def get_result(self):

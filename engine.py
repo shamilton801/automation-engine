@@ -7,7 +7,7 @@ import docker
 import time
 
 # Parameters
-MAX_CON_MATCHES = 8
+MAX_CON_MATCHES = 2
 
 class Engine:
 
