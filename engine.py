@@ -7,16 +7,22 @@ import docker
 import time
 
 # Parameters
-MAX_CON_MATCHES = 10
+MAX_CON_MATCHES = 8
 
 class Engine:
 
     def __init__(self, db: DBInterface, stop_event: Event):
         self._running_matches:Match = []
         self._matches_to_run = deque()
-        self._stop_event = stop_event
         self._db = db
         self._lock = Lock()
+
+        self._running_test_matches:Match = []
+        self._test_matches_to_run = deque()
+        self._test_db = TestDBInterface()
+        self._test_lock = Lock()
+
+        self._stop_event = stop_event
 
     def handle_new_bot(self, bot_name, type):
         opponents = self._db.get_opponents(type)
@@ -32,31 +38,34 @@ class Engine:
         self._stop_event.clear()
 
     def start(self):
-        self._consumer_handle = Thread(target=self._match_consumer, args=(), daemon=True)
+        self._consumer_handle = Thread(target=self._match_consumer, args=(self._send_result,), daemon=True)
+        self._test_handle = Thread(target=self._match_consumer, args=(self._send_result,), daemon=True)
         self._consumer_handle.start()
+        self._test_handle.start()
 
-    def _match_consumer(self):
+    def _match_consumer(self, result_callback):
         while not self._stop_event.is_set():
+            self._lock.acquire()
             if len(self._running_matches) < MAX_CON_MATCHES and len(self._matches_to_run) > 0:
-                self._lock.acquire()
                 new_match = self._matches_to_run.pop()
-                self._lock.release()
                 new_match.run()
                 self._running_matches.append(new_match)
+            self._lock.release()
 
+            self._lock.acquire()
             for match in self._running_matches:
                 if match.is_finished():
                     json_result = match.get_result()
                     print(json_result)
-                    self._send_result(json_result)
+                    result_callback(json_result)
                     self._running_matches.remove(match)
+            self._lock.release()
 
         for match in self._running_matches:
             match.stop()
 
     def _send_result(self, json_result):
         print(json_result)
-
 
 count = 1
 def keyboard_loop():
@@ -76,9 +85,7 @@ if __name__ == '__main__':
     engine.handle_new_bot("seeker", DBInterface.SEEKER)
     engine.handle_new_bot("hider", DBInterface.HIDER)
     engine.handle_new_bot("scotland_yard", DBInterface.SEEKER)
-    engine.handle_new_bot("hider copy", DBInterface.HIDER)
-    engine.handle_new_bot("scotland_yard copy", DBInterface.SEEKER)
-    engine.handle_new_bot("scotland_yard copy 2", DBInterface.SEEKER)
+    engine.handle_new_bot("hider_copy", DBInterface.HIDER)
     
     keyboard_loop()
     engine.stop()

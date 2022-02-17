@@ -1,7 +1,8 @@
 import random
 from typing import List, Tuple
+from cyberchase import Seeker
 
-class Seeker:
+class Seeker(Seeker):
 
     def __init__(self):
         pass

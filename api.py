@@ -9,7 +9,7 @@ app = Flask(__name__)
 def update_record():
     record = json.loads(request.data)
     new_records = []
-    for r in records:
+    for r in record:
         if r['name'] == record['name']:
             r['email'] = record['email']
         new_records.append(r)

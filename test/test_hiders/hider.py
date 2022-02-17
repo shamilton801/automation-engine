@@ -1,7 +1,8 @@
 import random
 from typing import List, Tuple
+from cyberchase import Hider
 
-class Hider:
+class Hider(Hider):
     def __init__(self):
         pass
 

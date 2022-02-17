@@ -2,10 +2,10 @@
 from typing import List, Tuple
 import random
 from collections import deque
-from board import Board
+from cyberchase import Seeker, Board
 
 
-class Seeker:
+class Scotland_yard(Seeker):
     """
     The scotland yard algorithm is based on prioritizing the least recently seen square. 
 

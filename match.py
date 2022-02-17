@@ -1,7 +1,6 @@
 import docker
 import uuid
 import os
-import shutil
 import json
 
 from db_interface import DBInterface
@@ -17,6 +16,7 @@ class Match:
         self._bot1_type = type
         self._bot2 = bot2
         self._bot2_type = Match.inverse_type(type)
+        
         self._timestamp = int(timestamp*100000)
         self._result_file_name = self._get_hash()
         self._db = db
@@ -32,9 +32,10 @@ class Match:
         
         self._db.download_bot_file(self._bot1, self._bot1_type, match_dir_path)
         self._db.download_bot_file(self._bot2, self._bot2_type, match_dir_path)
-        self._copy_game_files(match_dir_path)
 
-        command = f"python main.py {self._result_file_name}"
+        seeker = self._bot1 if self._bot1_type == DBInterface.SEEKER else self._bot2
+        hider = self._bot2 if self._bot2_type == DBInterface.HIDER else self._bot1
+        command = f"python -m cyberchase {seeker} {hider} {self._result_file_name}"
 
         try:
             self._container = self._client.containers.run("python",
@@ -43,18 +44,12 @@ class Match:
                                                           volumes=[f"{match_dir_path}:/code"],
                                                           network_disabled=True,
                                                           mem_limit="1000m",
-                                                          cpu_count=2,
+                                                          cpu_count=1,
                                                           )        
         except docker.errors.ContainerError as e: 
             print("Code execution failed - syntax error")
             print(e)
                     
-    def _copy_game_files(self, destination):
-        full_path = os.path.join(self._parent_dir, "game")
-        for filename in os.listdir(full_path):
-            file_path = os.path.join(full_path, filename)
-            shutil.copyfile(file_path, f"{destination}/{filename}")
-    
     def stop(self):
         self._container.kill()
 

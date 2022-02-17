@@ -28,9 +28,4 @@ class TestDBInterface(DBInterface):
 
     def download_bot_file(self, name, type, destination):
         source_loc = os.path.join(self._get_test_bot_dir(type), f"{name}.py")
-        if type == super().SEEKER:
-            shutil.copy(source_loc, os.path.join(destination, "seeker.py"))
-        elif type == super().HIDER:
-            shutil.copy(source_loc, os.path.join(destination, "hider.py"))
-        else:
-            raise Exception("bad bot type:", type)
+        shutil.copy(source_loc, os.path.join(destination, f"{name}.py"))
