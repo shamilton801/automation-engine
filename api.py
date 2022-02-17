@@ -18,8 +18,6 @@ def update_record():
 
     return jsonify({"status": message})
 
-
-
 if __name__ == "__main__":
     firebase = FirebaseDBInterface()
     engine = Engine(firebase, Event())
