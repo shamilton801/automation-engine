@@ -5,6 +5,7 @@ from match import Match
 from test_db_interface import TestDBInterface
 import docker
 import time
+import requests
 
 # Parameters
 MAX_CON_MATCHES = 2
@@ -29,7 +30,7 @@ class Engine:
     def handle_request(self, record):
         print(record)
         self._db.configure(record)
-        self.handle_new_bot(self._db.player.filename, self._db.player.type)
+        self.handle_new_bot(self._db._player["filename"], self._db._player["type"])
 
     def stop(self):
         self._stop_event.set()
@@ -63,8 +64,10 @@ class Engine:
         for match in self._running_matches:
             match.stop()
 
-    def _send_result(self, json_result):
-        print(json_result)
+    def _send_result(self, result):
+        res = requests.post('http://localhost:5000/tests/endpoint', json=result)
+        print('response from server:', res.text)
+        response = res.json()
 
 count = 1
 def keyboard_loop():

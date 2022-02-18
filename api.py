@@ -3,11 +3,13 @@ from flask import Flask, request, jsonify
 from engine import Engine
 from firebase_db_interface import FirebaseDBInterface
 from threading import Event
+import logger
 
 app = Flask(__name__)
 
-@app.route('/newbot', methods=['POST'])
+@app.route("/", methods=['POST'])
 def update_record():
+    print("IN FUNCTION")
     record = json.loads(request.data)
     message = "Engine received match set request successfully. Simulating now!"
     try:
