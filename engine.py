@@ -27,6 +27,7 @@ class Engine:
             self._lock.release()
 
     def handle_request(self, record):
+        print(record)
         self._db.configure(record)
         self.handle_new_bot(self._db.player.filename, self._db.player.type)
 
