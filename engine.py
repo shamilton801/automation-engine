@@ -46,19 +46,25 @@ class Engine:
     def _match_consumer(self, result_callback):
         while not self._stop_event.is_set():
             self._lock.acquire()
-            if len(self._running_matches) < MAX_CON_MATCHES and len(self._matches_to_run) > 0:
-                new_match = self._matches_to_run.pop()
-                new_match.run()
-                self._running_matches.append(new_match)
+            try:
+                if len(self._running_matches) < MAX_CON_MATCHES and len(self._matches_to_run) > 0:
+                    new_match = self._matches_to_run.pop()
+                    new_match.run()
+                    self._running_matches.append(new_match)
+            except Exception as e:
+                print(e)
             self._lock.release()
 
             self._lock.acquire()
-            for match in self._running_matches:
-                if match.is_finished():
-                    json_result = match.get_result()
-                    print(json_result)
-                    result_callback(json_result)
-                    self._running_matches.remove(match)
+            try:
+                for match in self._running_matches:
+                    if match.is_finished():
+                        json_result = match.get_result()
+                        print(json_result)
+                        result_callback(json_result)
+                        self._running_matches.remove(match)
+            except Exception as e:
+                print(e)
             self._lock.release()
 
         for match in self._running_matches:
