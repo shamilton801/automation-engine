@@ -39,9 +39,7 @@ class Engine:
 
     def start(self):
         self._consumer_handle = Thread(target=self._match_consumer, args=(self._send_result,), daemon=True)
-        self._test_handle = Thread(target=self._match_consumer, args=(self._send_result,), daemon=True)
         self._consumer_handle.start()
-        self._test_handle.start()
 
     def _match_consumer(self, result_callback):
         while not self._stop_event.is_set():
@@ -61,8 +59,8 @@ class Engine:
                     if match.is_finished():
                         json_result = match.get_result()
                         print(json_result)
-                        result_callback(json_result)
                         self._running_matches.remove(match)
+                        result_callback(json_result)
             except Exception as e:
                 print(e)
             self._lock.release()
@@ -71,9 +69,8 @@ class Engine:
             match.stop()
 
     def _send_result(self, result):
-        res = requests.post('http://localhost:5000/tests/endpoint', json=result)
+        res = requests.post('https://us-central1-turinggamesautomation.cloudfunctions.net/getMatchDataFromEngine', data=result, timeout=1)
         print('response from server:', res.text)
-        response = res.json()
 
 count = 1
 def keyboard_loop():

@@ -1,13 +1,14 @@
 import sys
+import datetime
 
 class Logger(object):
     def __init__(self):
         self.terminal = sys.stdout
-        self.log = open("logfile.log", "a")
    
     def write(self, message):
         self.terminal.write(message)
-        self.log.write(message)  
+        with open("logfile.log", "a") as f:
+            f.write(f"{datetime.datetime.now()}\t{message}")  
 
     def flush(self):
         # this flush method is needed for python 3 compatibility.
