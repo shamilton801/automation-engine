@@ -57,9 +57,9 @@ class Engine:
             try:
                 for match in self._running_matches:
                     if match.is_finished():
+                        self._running_matches.remove(match)
                         json_result = match.get_result()
                         print(json_result)
-                        self._running_matches.remove(match)
                         result_callback(json_result)
             except Exception as e:
                 print(e)

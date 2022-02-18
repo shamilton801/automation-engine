@@ -1,2 +1,2 @@
 docker stop $(docker container ls -q)
-docker container prune -f 
+docker system prune -af
