@@ -16,13 +16,13 @@ class FirebaseDBInterface(DBInterface):
     def configure(self, record):
         self._player = {}
         self._player.name = record["name"]
-        self._player.filename = record["filename"]
+        self._player.filename = record["filename"].rsplit(".", 1)[0]
         self._player.type = DBInterface.SEEKER if record["type"] == "seeker" else DBInterface.HIDER
         self._player.link = record["link"] 
 
         self._opponents = {}
         for r in record["opponents"]:
-            self._opponents[r["name"]] =  (r["filename"], r["link"])    
+            self._opponents[r["name"]] =  (r["filename"].rsplit(".", 1)[0], r["link"])    
 
     def get_opponents(self, type):
         result = []
