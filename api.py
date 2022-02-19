@@ -10,9 +10,9 @@ app = Flask(__name__)
 @app.route("/", methods=['POST'])
 def update_record():
     print("IN FUNCTION")
-    record = json.loads(request.data)
     message = "Engine received match set request successfully. Simulating now!"
     try:
+        record = json.loads(request.data)
         engine.handle_request(record)
     except Exception as e:
         print(e)
