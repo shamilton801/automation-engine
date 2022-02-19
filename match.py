@@ -2,6 +2,7 @@ import docker
 import uuid
 import os
 import json
+import copy
 
 from db_interface import DBInterface
 
@@ -19,7 +20,7 @@ class Match:
         
         self._timestamp = int(timestamp*100000)
         self._result_file_name = self._get_hash()
-        self._db = db
+        self._db = copy.copy(db)
         self._parent_dir = os.path.dirname(__file__)
         self._client = docker.from_env()
     

@@ -8,7 +8,7 @@ import time
 import requests
 
 # Parameters
-MAX_CON_MATCHES = 2
+MAX_CON_MATCHES = 6
 
 class Engine:
 
@@ -54,6 +54,8 @@ class Engine:
             self._lock.release()
 
             self._lock.acquire()
+            print(f"Running matches: {len(self._running_matches)}")
+            print(f"Queued matches: {len(self._matches_to_run)}")
             try:
                 for match in self._running_matches:
                     if match.is_finished():
