@@ -71,7 +71,7 @@ class Engine:
             match.stop()
 
     def _send_result(self, result):
-        res = requests.post('https://us-central1-turinggamesautomation.cloudfunctions.net/getMatchDataFromEngine', data=result, timeout=1)
+        res = requests.post('https://us-central1-turinggamesautomation.cloudfunctions.net/getMatchDataFromEngine', data=result, timeout=0.3)
         print('response from server:', res.text)
 
 count = 1
