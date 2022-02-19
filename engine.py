@@ -39,7 +39,17 @@ class Engine:
 
     def start(self):
         self._consumer_handle = Thread(target=self._match_consumer, args=(self._send_result,), daemon=True)
+        self._stats_handle = Thread(target=self._stat_thread, args=(), daemon=True)
         self._consumer_handle.start()
+        self._stats_handle.start()
+
+    def _stat_thread(self):
+        while not self._stop_event.is_set():
+            time.sleep(3)
+            self._lock.acquire()
+            print(f"Running matches: {len(self._running_matches)}")
+            print(f"Queued matches: {len(self._matches_to_run)}")
+            self._lock.release()
 
     def _match_consumer(self, result_callback):
         while not self._stop_event.is_set():
@@ -54,8 +64,6 @@ class Engine:
             self._lock.release()
 
             self._lock.acquire()
-            print(f"Running matches: {len(self._running_matches)}")
-            print(f"Queued matches: {len(self._matches_to_run)}")
             try:
                 for match in self._running_matches:
                     if match.is_finished():
